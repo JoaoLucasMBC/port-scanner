@@ -5,6 +5,8 @@ import multiprocessing
 import json
 
 def main():
+    ascii_banner = pyfiglet.figlet_format("JOHNNY'S")
+    print(ascii_banner)
     ascii_banner = pyfiglet.figlet_format("PORT SCANNER")
     print(ascii_banner)
 
