@@ -36,7 +36,7 @@ Este scanner de portas TCP em Python permite que você escaneie um intervalo de 
 Para executar o scanner, use o seguinte comando:
 
 ```bash
-python scan.py <host> <flags>
+python scan.py [-h] --host <host> [--ports <start_port> <end_port>]
 ```
 
 ### Opções
@@ -49,14 +49,18 @@ python scan.py <host> <flags>
 - **Escanear as portas conhecidas**:
 
   ```bash
-  python scan.py -h <nome_do_host_ou_ip>
+  python scan.py --host <nome_do_host_ou_ip>
   ```
 
 - **Escanear um intervalo de portas**:
 
   ```bash
-  python scan.py -h <nome_do_host_ou_ip> -p <porta_inicial> <porta_final>
+  python scan.py --host <nome_do_host_ou_ip> -ports <start_port> <end_port>
   ```
+
+## Example
+
+![alt text](image.png)
 
 ### Script de Portas Bem Conhecidas
 

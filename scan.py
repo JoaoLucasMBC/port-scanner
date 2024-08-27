@@ -3,6 +3,7 @@ import sys
 import socket
 import multiprocessing
 import json
+import argparse
 
 def main():
     # Printa os banners
@@ -11,31 +12,30 @@ def main():
     ascii_banner = pyfiglet.figlet_format("PORT SCANNER")
     print(ascii_banner)
 
-    if len(sys.argv) > 4 or len(sys.argv) < 2:
-        print("Invalid arguments")
-        print("Usage: python3 scan.py <ip/host> <start_port> <end_port>")
-        sys.exit()
-    
-    target = sys.argv[1]
+    # Configura o argparse para gerenciar os argumentos de linha de comando
+    parser = argparse.ArgumentParser(description="A simple port scanner")
+    parser.add_argument('--host', type=str, required=True, help='IP or hostname to scan')
+    parser.add_argument('--port', type=int, nargs=2, metavar=('start_port', 'end_port'), 
+                        help='Range of ports to scan. If not provided, the scanner will scan the main ports')
+    args = parser.parse_args()
+
+    target = args.host
 
     # Se não for um IP, tenta resolver o hostname
     if not target.isnumeric():
         try:
             target = socket.gethostbyname(target)    
         except socket.gaierror:
-            print("\n Hostname couldn't be resolved. Check the target or try again later.")
+            print("\n Hostname could not be resolved. Exiting")
             sys.exit()
     
     print("Scanning Target: " + target)
-
     print("-=" * 10 + '\n')
     
-    if len(sys.argv) == 2:
-        start_port = None
-        end_port = None
+    if args.port:
+        start_port, end_port = args.port
     else:
-        start_port = int(sys.argv[2])
-        end_port = int(sys.argv[3])
+        start_port, end_port = None, None
 
     try:
         # Usando o máximo de núcleos disponíveis para acelerar o processo
@@ -50,7 +50,7 @@ def main():
                 for port in MAIN_PORTS:
                     pool.apply_async(scan_port, args=(target, int(port), closed_ports))
             else:
-                for port in range(start_port, end_port+1):
+                for port in range(start_port, end_port + 1):
                     pool.apply_async(scan_port, args=(target, port, closed_ports))
 
             # Fecha e espera os resultados
