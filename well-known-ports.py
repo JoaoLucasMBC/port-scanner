@@ -11,21 +11,26 @@ def scrape_port_services():
 
     port_service_map = {}
 
+    # Pega as tabelas da página
     tables = soup.find_all("table", {"class": "wikitable"})
-    print(len(tables))
+    
+    # Apenas as tabelas 1 e 2 contém as informações que queremos
     for table in tables[1:3]:
         rows = table.find_all("tr")
         for row in rows[1:]:  # Pula o cabecalho
             cols = row.find_all("td")
+            # Se é uma linha válida
             if len(cols) >= 2:
                 try:
-                    if "Yes" in cols[1].text:
+                    # Apenas salvamos as portas que possuem um serviço associado
+                    if "Yes" in cols[1].text or "Reserved" in cols[1].text:
                         port_range = cols[0].text.strip()
                         service_name = cols[-1].text.strip()
-
+                        
+                        # Remove as referências da wiki
                         cleaned_text = re.sub(r'\[.*?\]', '', service_name)
                         
-                        print(port_range, cleaned_text)
+                        # Salvamos a porta e o serviço associado
                         port_service_map[int(port_range)] = cleaned_text
                 except:
                     continue
